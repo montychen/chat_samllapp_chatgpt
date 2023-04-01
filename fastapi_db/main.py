@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session  # type: ignore
 from . import crud, schemas, models
 from .databases import SessionLocal, engine
 
-openai.api_key = "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"  # 请替换为您的API密钥
+openai.api_key = "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"  # 请替换为您的API密钥
 
 system_role = """
 我希望你扮演一位星座大师、占星师、占卜师、潜心研究占星学、神秘学、塔罗牌、星座、周易八卦。
