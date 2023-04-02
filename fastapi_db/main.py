@@ -6,12 +6,15 @@ uvicorn fastapi_db.main:app --reload
 """
 import openai
 import json
+import urllib.request
+import ssl
+
 from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session  # type: ignore
 from . import crud, schemas, models
 from .databases import SessionLocal, engine
 
-openai.api_key = "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"  # 请替换为您的API密钥
+openai.api_key = "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"  # 请替换为您的API密钥
 
 system_role = """
 我希望你扮演一位星座大师、占星师、占卜师、潜心研究占星学、神秘学、塔罗牌、星座、周易八卦。
@@ -36,6 +39,70 @@ def get_db():  # 设定数据库连接
         yield db
     finally:
         db.close()
+
+
+@app.post("/login/", response_model=schemas.Login)
+def sns_login(user_login: schemas.LoginBase):
+    """
+    返回值是一个json, 里面有用户的openid， 如： {"openid": "o-PON4sxIOSoHLDhC5NR6mCtzN-E"}
+    """
+    sns_login = {
+        "wx_smallapp_xinzuo":
+        {
+            "login_url": "https://api.weixin.qq.com/sns/jscode2session",
+            "appid": "wxfbe7379eda6e5693",
+            "secret": "2e47cc4c755daf4db74fcdabcbc77953",
+            "js_code": "",
+            "grant_type": "authorization_code"
+        },
+
+        "wx_smallapp_qingan":
+        {
+            "login_url": "https://api.weixin.qq.com/sns/jscode2session",
+            "appid": "",
+            "secret": "",
+            "js_code": "",
+            "grant_type": "authorization_code"
+        }
+    }
+
+    login = {}
+
+    if user_login.which_app == 0:   # 0微信星座， 1微信情感； 2抖音星座， 3抖音情感
+        login = sns_login["wx_smallapp_xinzuo"]
+    if user_login.which_app == 1:
+        login = sns_login["wx_smallapp_qingan"]
+
+    login_url = login["login_url"] + "?" + \
+        "appid=" + login["appid"] + \
+        "&secret=" + login["secret"] + \
+        "&js_code=" + user_login.js_code + \
+        "&grant_type=" + login["grant_type"]
+    print(login_url)
+
+    ssl._create_default_https_context = ssl._create_unverified_context
+    res = urllib.request.urlopen(login_url)
+    # 微信返回的消息， 无论登陆成功还是失败，res.status都是200
+    # 失败：{'errcode': 40163, 'errmsg': 'code been used, rid: 64295b65-5c68b8d1-3dd255cd'}
+    # 成功：{'session_key': 'FXyAgbNxCO7jXW13E177YA==', 'openid': 'o-PON4sxIOSoHLDhC5NR6mCtzN-E'}
+
+    res_str = res.read().decode('utf-8')
+    res_json = json.loads(res_str)
+
+    openid = res_json.get("openid", 0)  # openid 不存在，也就是登陆失败， opendi赋值0
+    print("openid={}\n".format(openid))
+    login_result_msg = "ok"
+    if openid == 0:  # 0 表示登录失败
+        login_result_msg = "errcode: {}    errmsg: {}".format(res_json["errcode"], res_json["errmsg"])
+        print(login_result_msg)
+
+    login_result = schemas.Login(
+        which_app=user_login.which_app,     # 0微信星座， 1微信情感； 2抖音星座， 3抖音情感
+        js_code=user_login.js_code,
+        openid=openid,              # 登陆成功后，被赋予用户的openid，如果是0表示登陆失败
+        login_result_msg=login_result_msg,
+    )
+    return login_result
 
 
 @app.post("/ask/", response_model=schemas.Chat)

@@ -6,6 +6,13 @@ from typing import Union
 from pydantic import BaseModel
 from datetime import datetime
 
+class LoginBase(BaseModel):
+    which_app: int     # 0微信星座， 1微信情感； 2抖音星座， 3抖音情感
+    js_code: str
+
+class Login(LoginBase):
+    openid: str                   # 登陆成功后，被赋予用户的openid，如果是0表示登陆失败
+    login_result_msg: str = ""    # 默认是 ok， 登陆失败会包含失败原因
 
 # 去掉id、is_answer、datetime的类，用来新建数据时使用
 class ChatBase(BaseModel):
