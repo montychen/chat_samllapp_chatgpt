@@ -1,0 +1,21 @@
+
+
+curl -X 'POST' \
+  'http://chat.ouj.com/app/ask/' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "user_unionid": "29为uniionid",
+  "nickname": "大军",
+  "ask_or_answer": "巨蟹座4月的运势如何"
+}'
+
+curl -X 'POST' \
+  'http://chat.ouj.com/app/login/' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "which_app": 0,
+  "js_code": "0f3SY92w3Qmlm03sOJ2w3itMYa4SY92l"
+}'
+
