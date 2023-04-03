@@ -1,7 +1,6 @@
 
-
 curl -X 'POST' \
-  'http://chat.ouj.com/app/ask/' \
+  'https://chat.ouj.com/app/ask/' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -11,7 +10,7 @@ curl -X 'POST' \
 }'
 
 curl -X 'POST' \
-  'http://chat.ouj.com/app/login/' \
+  'https://chat.ouj.com/app/login/' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -19,3 +18,11 @@ curl -X 'POST' \
   "js_code": "0f3SY92w3Qmlm03sOJ2w3itMYa4SY92l"
 }'
 
+curl -X 'POST' \
+  'https://chat.ouj.com/app/login/' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "which_app": 0,
+  "js_code": "0f3SY92w3Qmlm03sOJ2w3itMYa4SY92l"
+}'
