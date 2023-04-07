@@ -1,7 +1,7 @@
 import os
 import openai
 
-openai.api_key = "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"  # 请替换为您的API密钥
+openai.api_key = "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"  # 请替换为您的API密钥
 
 
 def chat_gtp():

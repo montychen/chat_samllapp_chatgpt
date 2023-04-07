@@ -54,10 +54,11 @@ def update_user_chat_context(db: Session, user_unionid: int, nickname: str, user
     return new_context_str
 
 
-def create_chat_log(db: Session, user_unionid: int, nickname: str, is_answer: bool, ask_or_answer: str):
+def create_chat_log(db: Session, user_unionid: int, nickname: str, which_app: int, is_answer: bool, ask_or_answer: str):
     db_Chat = models.Chat(
         user_unionid=user_unionid,
         nickname=nickname,
+        which_app=which_app,
         is_answer=is_answer,
         ask_or_answer=ask_or_answer,
         datatime=datetime.now(),
@@ -76,10 +77,10 @@ def jsonstr_append(jsonstr: str, append: str, maxlength: int = 1000):
         {"role": "user", "content": "Who won the world series in 2020?"},
         {"role": "assistant", "content": "The Los Angeles Dodgers won the World Series in 2020."}
     ]
-       
+
     参数append是仅有一条记录的json数组list,如
     [   {"role": "user", "content": "Where was it played?"} ]
-        
+
     返回值的长度由参数maxlength决定, 注意,返回值是json数组列表的字符串表现形式:
     [
             {"role": "user", "content": "Who won the world series in 2020?"},
@@ -88,7 +89,7 @@ def jsonstr_append(jsonstr: str, append: str, maxlength: int = 1000):
     ]
     """
     jsonstr = jsonstr.strip() if jsonstr else ""   # 处理为 None 的情况
-    append = append.strip()   if append  else ""
+    append = append.strip() if append else ""
     if len(jsonstr) == 0:   # 只有append，返回值的长度可能会大于 return_maxlength
         return append
     if len(append) == 0:
@@ -96,15 +97,17 @@ def jsonstr_append(jsonstr: str, append: str, maxlength: int = 1000):
 
     json_list = json.loads(jsonstr)  # 把json字符串转成list
     append_list = json.loads(append)
-    json_list = json_list + append_list        #  两个list列表jsonstr 和 append 进行拼接
-    
-    new_jsonstr = json.dumps(json_list, ensure_ascii=False) #dumps把json转成字符串，方便检查长度
+    json_list = json_list + append_list  # 两个list列表jsonstr 和 append 进行拼接
 
-    json_list_length = len(json_list)  #上面已经判断过jsonstr和append为空的可能，这里len(json_list)至少是2
+    # dumps把json转成字符串，方便检查长度
+    new_jsonstr = json.dumps(json_list, ensure_ascii=False)
+
+    # 上面已经判断过jsonstr和append为空的可能，这里len(json_list)至少是2
+    json_list_length = len(json_list)
     for i in range(json_list_length):
         if len(new_jsonstr) > maxlength:
             json_list.pop(0)              # 超长了， 要把前面旧的一个json去掉
-            new_jsonstr = json.dumps(json_list, ensure_ascii=False) 
+            new_jsonstr = json.dumps(json_list, ensure_ascii=False)
             if len(json_list) == 1:
                 break                     # 如果只剩下最后一个了，即使超长，也视为有效，并返回
         else:

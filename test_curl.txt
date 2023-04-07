@@ -8,6 +8,7 @@ curl -X 'POST' \
   -d '{
   "user_unionid": "29为uniionid",
   "nickname": "大军",
+  "which_app": 0,
   "ask_or_answer": "巨蟹座4月的运势如何"
 }'
 
@@ -28,3 +29,23 @@ curl -X 'POST' \
   "which_app": 0,
   "js_code": "0f3SY92w3Qmlm03sOJ2w3itMYa4SY92l"
 }'
+
+
+curl -X 'POST' \
+  'http://127.0.0.1:8000/login/' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "which_app": 0,
+  "js_code": "0f3SY92w3Qmlm03sOJ2w3itMYa4SY92l"
+}'
+
+curl -X 'POST' \
+  'http://127.0.0.1:8000/login/' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "which_app": 2,
+  "js_code": "123"
+}'
+

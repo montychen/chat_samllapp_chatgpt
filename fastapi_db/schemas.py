@@ -6,18 +6,24 @@ from typing import Union
 from pydantic import BaseModel
 from datetime import datetime
 
+
 class LoginBase(BaseModel):
     which_app: int     # 0微信星座， 1微信情感； 2抖音星座， 3抖音情感
     js_code: str
+
 
 class Login(LoginBase):
     openid: str                   # 登陆成功后，被赋予用户的openid，如果是0表示登陆失败
     login_result_msg: str = ""    # 默认是 ok， 登陆失败会包含失败原因
 
 # 去掉id、is_answer、datetime的类，用来新建数据时使用
+
+
 class ChatBase(BaseModel):
     user_unionid: str    # 微信 unionid长度29, 一个人会有多条记录所以在这个表里unionid不唯一
     nickname: str        # 微信 昵称
+
+    which_app: int  # 0微信星座， 1微信情感； 2抖音星座， 3抖音情感
 
     # gpt-3.5-turbo最大tokens数 4,096； gpt-4-0314最大tokens数 8,192； gpt-4-32k-0314 最大tokens数 32k
     ask_or_answer: str   # 用户提问或ai回答的具体内容
