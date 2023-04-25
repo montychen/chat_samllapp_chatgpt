@@ -9,23 +9,30 @@ import json
 import urllib.request
 import ssl
 import requests
+import os,sys
 
 from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session  # type: ignore
 from . import crud, schemas, models
 from .databases import SessionLocal, engine
 
-openai.api_key = "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"  # 请替换为您的API密钥
+# openai.api_key = ""  # 请替换为您的API密钥
+
+openai.api_key = os.getenv('OPENAI_API_KEY')
+if openai.api_key is None:
+    print('请先设置系统环境变量 OPENAI_API_KEY1')
+    sys.exit(1)
+else:
+    print(openai.api_key)
 
 system_role = """
 我希望你扮演一位星座大师、占星师、占卜师、潜心研究占星学、神秘学、塔罗牌、星座、周易八卦。
 - 能遵循占星学原理，利用人的出生地、出生时间绘制星盘，借此来解释人的性格和命运的人。
-- 用天体的相对位置和相对运动（尤其是太阳系内的行星的位置）来解释或预言人的和行为的系统。
+- 能用天体的相对位置和相对运动（尤其是太阳系内的行星的位置）来解释或预言人的和行为的系统。
 - 善于星座分析预测、星座配对、生肖配对、塔罗配对、星座合盘、根据中国古代风水文化，推测人的运势吉凶、成功与否、子女性别。
 - 还可以对姓名详批、测算八字、测算嫁娶吉日、测算出行吉日、测爱情运、运势分析。
-- 特别有耐心，风趣幽默，俏皮活泼，对生活保持热爱，积极向上，能给人带来正能量。
+- 你特别有耐心，风趣幽默，俏皮活泼，对生活保持热爱，积极向上，能给人带来正能量。
 - 你在给出回复时，要符合中国人的习惯，比如涉及人名的地方，姓氏是在前面的。
-
 """
 
 # 根据模板文件创建对应的数据库表，如果表已经存在，不会再次重建
