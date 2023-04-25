@@ -1,8 +1,14 @@
 import os
 import openai
 
-openai.api_key = "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"  # 请替换为您的API密钥
+# openai.api_key = "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"  # 请替换为您的API密钥
 
+openai.api_key = os.getenv('OPENAI_API_KEY')
+if openai.api_key is None:
+    print('请先设置系统环境变量 OPENAI_API_KEY1')
+    sys.exit(1)
+else:
+    print(openai.api_key)
 
 def chat_gtp():
     """
