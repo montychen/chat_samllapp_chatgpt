@@ -18,6 +18,7 @@ from .databases import SessionLocal, engine
 
 # openai.api_key = ""  # 请替换为您的API密钥
 
+# 在 ~/.bashrc 加入 export OPENAI_API_KEY=""
 openai.api_key = os.getenv('OPENAI_API_KEY')
 if openai.api_key is None:
     print('请先设置系统环境变量 OPENAI_API_KEY1')
